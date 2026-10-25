@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Java Programming Practice Test (70 Items)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .option-card {
+            transition: all 0.15s ease-in-out;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .option-card:active:not(.disabled) {
+            transform: scale(0.98);
+        }
+        /* Mobile safe-area paddings */
+        .pb-safe {
+            padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col antialiased selection:bg-cyan-500 selection:text-slate-950 pb-safe">
+
+    <!-- Sticky Header -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/95 border-b border-slate-800 shadow-md">
+        <div class="max-w-5xl mx-auto px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <div class="p-2 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-md text-white">
+                    <i class="fa-brands fa-java text-xl sm:text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-lg font-bold text-white tracking-tight leading-tight">Java Quiz</h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400">70 Questions Practice Test</p>
+                </div>
+            </div>
+
+            <!-- Stats & Progress Indicator -->
+            <div class="flex items-center gap-3 sm:gap-6">
+                <div class="text-right">
+                    <div class="text-[10px] sm:text-xs text-slate-400 font-medium">Progress</div>
+                    <div class="text-xs sm:text-sm font-bold text-cyan-400"><span id="answered-count">0</span> / 70</div>
+                </div>
+
+                <!-- Bar Progress -->
+                <div class="w-20 sm:w-32 bg-slate-800 rounded-full h-2.5 sm:h-3 overflow-hidden border border-slate-700">
+                    <div id="progress-bar" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <button id="header-submit-btn" onclick="submitQuiz()" class="hidden md:inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition-all shadow-md shadow-cyan-500/20 active:scale-95">
+                    <i class="fa-solid fa-paper-plane"></i> Submit
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-8 flex-grow w-full">
+
+        <!-- Intro Banner -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 mb-5 sm:mb-8 shadow-xl relative overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="text-base sm:text-xl font-bold text-white mb-1.5 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-cyan-400"></i> Instructions
+                </h2>
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-3">
+                    Choose the best answer (<strong class="text-cyan-400">A, B, C, or D</strong>) for each item. You can use the sticky bottom bar to submit when finished.
+                </p>
+                <div class="flex flex-wrap gap-3 text-[11px] sm:text-xs font-medium text-slate-400">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-green-400"></i> Auto-grading</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-mobile-screen text-cyan-400"></i> Mobile Optimized</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-rotate-left text-blue-400"></i> Retake Enabled</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Questions Container -->
+        <form id="quiz-form" class="space-y-4 sm:space-y-6">
+            <!-- Questions will be injected here dynamically -->
+        </form>
+
+        <!-- Bottom Action Desktop View -->
+        <div class="mt-8 mb-6 hidden md:flex justify-center">
+            <button onclick="submitQuiz()" type="button" class="w-auto px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold text-base rounded-xl shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-paper-plane text-lg"></i> Submit Quiz & View Results
+            </button>
+        </div>
+    </main>
+
+    <!-- Sticky Mobile Bottom Bar -->
+    <div id="mobile-bottom-bar" class="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 p-3 sm:hidden shadow-2xl flex items-center justify-between gap-3">
+        <div class="flex flex-col">
+            <span class="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">Answered</span>
+            <span class="text-sm font-extrabold text-cyan-400"><span id="mobile-answered-count">0</span> / 70</span>
+        </div>
+        <button onclick="submitQuiz()" type="button" class="flex-grow max-w-[220px] min-h-[44px] bg-gradient-to-r from-cyan-500 to-blue-600 active:from-cyan-400 active:to-blue-500 text-slate-950 font-bold text-sm rounded-xl shadow-md shadow-cyan-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all">
+            <i class="fa-solid fa-paper-plane"></i> Submit Quiz
+        </button>
+    </div>
+
+    <!-- Results Modal / Overlay -->
+    <div id="results-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-xl w-full p-5 sm:p-8 shadow-2xl overflow-y-auto max-h-[90vh] text-center relative transform scale-95 transition-transform duration-300" id="modal-card">
+            
+            <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-colors">
+                <i class="fa-solid fa-xmark text-lg sm:text-xl"></i>
+            </button>
+
+            <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-800 border-2 border-cyan-500/30 mb-3 text-cyan-400 text-2xl sm:text-3xl shadow-lg shadow-cyan-500/10">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+
+            <h2 class="text-xl sm:text-3xl font-black text-white mb-1" id="result-title">Quiz Completed!</h2>
+            <p class="text-slate-400 text-xs sm:text-sm mb-5" id="result-subtitle">Here is your performance summary</p>
+
+            <!-- Score Cards Grid -->
+            <div class="grid grid-cols-2 gap-2.5 sm:gap-3 mb-5">
+                <div class="bg-slate-800/60 border border-slate-700/50 p-3 rounded-xl">
+                    <div class="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">Score</div>
+                    <div class="text-xl sm:text-2xl font-black text-cyan-400 mt-0.5" id="score-text">0 / 70</div>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/50 p-3 rounded-xl">
+                    <div class="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">Percentage</div>
+                    <div class="text-xl sm:text-2xl font-black text-blue-400 mt-0.5" id="percentage-text">0%</div>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/50 p-3 rounded-xl">
+                    <div class="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">Correct</div>
+                    <div class="text-xl sm:text-2xl font-black text-emerald-400 mt-0.5" id="correct-text">0</div>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/50 p-3 rounded-xl">
+                    <div class="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">Wrong / Blank</div>
+                    <div class="text-xl sm:text-2xl font-black text-rose-400 mt-0.5" id="wrong-text">0</div>
+                </div>
+            </div>
+
+            <!-- Grade Assessment Banner -->
+            <div id="grade-badge" class="p-3.5 rounded-xl mb-5 text-xs sm:text-sm font-semibold border flex items-center justify-center gap-2">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-2.5 justify-center">
+                <button onclick="retakeQuiz()" class="w-full sm:w-auto min-h-[44px] px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl border border-slate-700 transition-colors flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-rotate-left"></i> Retake Quiz
+                </button>
+                <button onclick="reviewAnswers()" class="w-full sm:w-auto min-h-[44px] px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl transition-colors flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-magnifying-glass"></i> Review Answers
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Full Question Bank (70 items verbatim from document with verified standard answer key)
+        const quizData = [
+            { id: 1, question: "Who originally developed Java?", options: ["Microsoft", "Sun Microsystems", "Apple", "Google"], answer: "B" },
+            { id: 2, question: "Which Java feature lets code run on different platforms using the JVM?", options: ["Write Once, Run Anywhere", "One Program, One Computer", "Compile Once, Delete Anywhere", "Windows Only"], answer: "A" },
+            { id: 3, question: "What does JVM stand for?", options: ["Java Variable Method", "Java Visual Machine", "Java Virtual Machine", "Joint Virtual Memory"], answer: "C" },
+            { id: 4, question: "What is the usual entry point of a Java application?", options: ["start()", "run()", "main()", "print()"], answer: "C" },
+            { id: 5, question: "Which statement prints text and moves to a new line?", options: ["System.out.print()", "System.out.println()", "System.in.println()", "Console.write()"], answer: "B" },
+            { id: 6, question: "What is the purpose of a Java package?", options: ["Delete classes", "Organize related classes", "Make variables private automatically", "Run loops"], answer: "B" },
+            { id: 7, question: "What should the file name be for public class StudentProfile?", options: ["studentprofile.java", "Student.java", "StudentProfile.java", "STUDENTPROFILE.txt"], answer: "C" },
+            { id: 8, question: "What does case-sensitive mean in Java?", options: ["Uppercase and lowercase are always the same", "age and Age can be different names", "Java ignores capitals", "Only classes use capitals"], answer: "B" },
+            { id: 9, question: "Which style is commonly used for class names?", options: ["lowercase", "snake_case", "UpperCamelCase", "ALLCAPS"], answer: "C" },
+            { id: 10, question: "Which style is commonly used for variables and methods?", options: ["lowerCamelCase", "UpperCamelCase only", "ALL_CAPS", "No style"], answer: "A" },
+            { id: 11, question: "Which class commonly receives keyboard input?", options: ["Printer", "Scanner", "RandomText", "InputBox"], answer: "B" },
+            { id: 12, question: "Which import allows you to use Scanner?", options: ["import java.io.Scanner;", "import java.util.Scanner;", "import java.Scanner;", "import Scanner.java.util;"], answer: "B" },
+            { id: 13, question: "Which Scanner method reads a complete line?", options: ["nextInt()", "nextDouble()", "nextLine()", "readLineNow()"], answer: "C" },
+            { id: 14, question: "What is the difference between print() and println()?", options: ["print adds a line; println does not", "They are identical", "println moves to a new line after printing", "print reads input"], answer: "C" },
+            { id: 15, question: "Which stream is normally used for standard output?", options: ["System.in", "System.out", "System.err only", "Scanner.out"], answer: "B" },
+            { id: 16, question: "Which symbol starts a single-line comment?", options: ["##", "//", "<!--", "**"], answer: "B" },
+            { id: 17, question: "Which symbols mark a multi-line comment?", options: ["// and //", "## and ##", "/* and */", "<!-- and -->"], answer: "C" },
+            { id: 18, question: "Which type stores a whole number such as 25?", options: ["int", "double", "boolean", "char"], answer: "A" },
+            { id: 19, question: "Which type can store 3.14?", options: ["int", "double", "char", "boolean"], answer: "B" },
+            { id: 20, question: "Which type stores one character such as 'A'?", options: ["String", "char", "int", "boolean"], answer: "B" },
+            { id: 21, question: "Which type stores true or false?", options: ["double", "char", "boolean", "String"], answer: "C" },
+            { id: 22, question: "Which statement about String is correct?", options: ["String is primitive", "String stores only one character", "String is a reference type", "String stores only numbers"], answer: "C" },
+            { id: 23, question: "What is type casting?", options: ["Repeating a loop", "Converting a value from one type to another", "Naming a class", "Comparing strings"], answer: "B" },
+            { id: 24, question: "What is the result of (int) 49.99?", options: ["50", "49", "49.99", "Always an error"], answer: "B" },
+            { id: 25, question: "What happens when an int is converted automatically to double?", options: ["Decimal part is removed", "The value can be converted automatically", "Program always crashes", "Value becomes String"], answer: "B" },
+            { id: 26, question: "What is 17 % 5?", options: ["2", "3", "5", "12"], answer: "A" },
+            { id: 27, question: "Which operator checks whether two values are equal?", options: ["=", "==", "!=", "=>"], answer: "B" },
+            { id: 28, question: "What does = do?", options: ["Checks equality only", "Assigns a value to a variable", "Means not equal", "Divides values"], answer: "B" },
+            { id: 29, question: "Which operator means not equal?", options: ["==", "=", "!=", "&&"], answer: "C" },
+            { id: 30, question: "What is 4 + 3 * 2?", options: ["14", "10", "12", "20"], answer: "B" },
+            { id: 31, question: "What does ++ do?", options: ["Decreases by one", "Increases by one", "Squares a value", "Compares values"], answer: "B" },
+            { id: 32, question: "Which logical operator is true only when both conditions are true?", options: ["&&", "||", "==", "!"], answer: "A" },
+            { id: 33, question: "Which logical operator is true if at least one condition is true?", options: ["&&", "||", "==", "!"], answer: "B" },
+            { id: 34, question: "What does logical ! do?", options: ["Adds values", "Reverses a boolean value", "Checks greater than", "Joins strings"], answer: "B" },
+            { id: 35, question: "What is decimal 5 in four-bit binary?", options: ["0011", "0101", "0110", "1001"], answer: "B" },
+            { id: 36, question: "What is 5 & 3 using bitwise AND?", options: ["1", "2", "6", "7"], answer: "A" },
+            { id: 37, question: "What is 5 | 3 using bitwise OR?", options: ["1", "3", "6", "7"], answer: "D" },
+            { id: 38, question: "What is 5 ^ 3 using bitwise XOR?", options: ["1", "5", "6", "7"], answer: "C" },
+            { id: 39, question: "What is 5 << 2 for a positive int?", options: ["7", "10", "20", "25"], answer: "C" },
+            { id: 40, question: "What is 20 >> 2 for a positive int?", options: ["2", "4", "5", "10"], answer: "C" },
+            { id: 41, question: "What does operator precedence determine?", options: ["All operators go right to left", "Which operators are evaluated first", "It applies only to strings", "It removes the need for parentheses"], answer: "B" },
+            { id: 42, question: "What is 100 / 10 / 2 using integer arithmetic?", options: ["20", "10", "5", "2"], answer: "C" },
+            { id: 43, question: "What is \"Result: \" + 5 + 5?", options: ["Result: 10", "Result: 55", "10", "Compilation always fails"], answer: "B" },
+            { id: 44, question: "What is \"Result: \" + (5 + 5)?", options: ["Result: 55", "Result: 10", "Result: 5 + 5", "10Result:"], answer: "B" },
+            { id: 45, question: "For false && condition, what happens due to short-circuiting?", options: ["Right side is always evaluated", "Right side is skipped", "Both sides become true", "Program stops completely"], answer: "B" },
+            { id: 46, question: "Which statement runs a block only when a condition is true?", options: ["if", "for", "import", "package"], answer: "A" },
+            { id: 47, question: "In an if-else-if chain, what happens after the first true condition?", options: ["Every remaining branch runs", "Only the first matching branch runs", "Program restarts", "else always runs first"], answer: "B" },
+            { id: 48, question: "When does else run?", options: ["When the if condition is false", "It repeats the if condition", "It declares a variable", "It imports a package"], answer: "A" },
+            { id: 49, question: "What is switch commonly used for?", options: ["Selecting among cases based on a value", "Creating arrays only", "Reading files only", "Writing comments"], answer: "A" },
+            { id: 50, question: "What may happen if break is omitted in a traditional switch?", options: ["Program always exits", "Execution may fall through to the next case", "Switch becomes a loop", "Code can never compile"], answer: "B" },
+            { id: 51, question: "What is default used for in switch?", options: ["Runs before every case", "Handles values not matched by another case", "Ends the class", "Declares the switch variable"], answer: "B" },
+            { id: 52, question: "Which modern switch syntax does not fall through automatically?", options: ["case 1:", "case 1 ->", "default:", "switch(1):"], answer: "B" },
+            { id: 53, question: "Which keyword can provide a value from a switch expression block?", options: ["yield", "continue", "package", "scanner"], answer: "A" },
+            { id: 54, question: "What does String.length() return?", options: ["Last character", "Number of characters", "First character", "Number of words only"], answer: "B" },
+            { id: 55, question: "What does charAt(0) return for \"Java\"?", options: ["J", "a", "v", "Java"], answer: "A" },
+            { id: 56, question: "Which method compares String text ignoring letter case?", options: ["==", "equalsIgnoreCase()", "charAt()", "substring()"], answer: "B" },
+            { id: 57, question: "Why is == generally not used to compare String contents?", options: ["It always converts text to numbers", "It checks object references, not text content reliably", "It changes the String", "It only works with uppercase"], answer: "B" },
+            { id: 58, question: "What does trim() do?", options: ["Removes whitespace at both ends", "Makes every letter uppercase", "Returns length", "Reverses text"], answer: "A" },
+            { id: 59, question: "What does indexOf() return if text is not found?", options: ["0", "1", "-1", "String length"], answer: "C" },
+            { id: 60, question: "In substring(1, 3), what is included?", options: ["Positions 1 and 3 only", "From index 1 up to but not including index 3", "Index 0 through 3", "Only index 3"], answer: "B" },
+            { id: 61, question: "Which escape sequence moves to a new line?", options: ["\\t", "\\n", "\\\\", "\\\""], answer: "B" },
+            { id: 62, question: "Which Math method rounds upward to an integer-valued double?", options: ["Math.floor()", "Math.ceil()", "Math.min()", "Math.sqrt()"], answer: "B" },
+            { id: 63, question: "Which expression generates a random integer from 1 through 100?", options: ["(int)(Math.random()*100)+1", "(int)Math.random()+100", "Math.random(1,100)", "(int)(Math.random()*101)+100"], answer: "A" },
+            { id: 64, question: "Which loop is useful when the repetition count is known?", options: ["for", "while only", "do-while only", "switch"], answer: "A" },
+            { id: 65, question: "Which loop always runs its body at least once?", options: ["for", "while", "do-while", "for-each"], answer: "C" },
+            { id: 66, question: "Which loop checks its condition before each iteration and may run zero times?", options: ["do-while", "while", "switch", "if-else"], answer: "B" },
+            { id: 67, question: "What is the first valid index of a Java array?", options: ["-1", "0", "1", "Array length"], answer: "B" },
+            { id: 68, question: "If int[] scores = {80, 90, 75}; what is scores[1]?", options: ["80", "90", "75", "1"], answer: "B" },
+            { id: 69, question: "If an array has length 5, what is its last valid index?", options: ["5", "4", "1", "0"], answer: "B" },
+            { id: 70, question: "What does break do inside a loop?", options: ["Skips current iteration", "Ends the loop", "Restarts the loop", "Adds one to index"], answer: "B" }
+        ];
+
+        // State tracking
+        const userAnswers = {};
+        let isSubmitted = false;
+
+        // Render Questions on load (Optimized Touch Targets for Mobile)
+        function renderQuiz() {
+            const form = document.getElementById('quiz-form');
+            form.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            quizData.forEach((q) => {
+                const qCard = document.createElement('div');
+                qCard.className = "bg-slate-900 border border-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 transition-all duration-300 shadow-md relative scroll-mt-20";
+                qCard.id = `question-card-${q.id}`;
+
+                let optionsHTML = '';
+                q.options.forEach((opt, optIdx) => {
+                    const letter = optionLetters[optIdx];
+                    const isChecked = userAnswers[q.id] === letter;
+
+                    optionsHTML += `
+                        <label class="option-card flex items-center min-h-[52px] p-3 rounded-xl border border-slate-800 bg-slate-950/70 active:bg-slate-800 hover:border-slate-700 cursor-pointer text-slate-200 text-xs sm:text-sm font-medium gap-3 select-none" id="opt-label-${q.id}-${letter}">
+                            <input type="radio" 
+                                   name="q_${q.id}" 
+                                   value="${letter}" 
+                                   ${isChecked ? 'checked' : ''} 
+                                   onchange="selectAnswer(${q.id}, '${letter}')"
+                                   class="h-4 w-4 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-slate-900 border-slate-700 bg-slate-800 flex-shrink-0">
+                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-slate-800 text-cyan-400 text-xs font-bold border border-slate-700 flex-shrink-0">
+                                ${letter}
+                            </span>
+                            <span class="flex-grow leading-tight">${escapeHTML(opt)}</span>
+                            <span class="feedback-icon hidden flex-shrink-0"></span>
+                        </label>
+                    `;
+                });
+
+                qCard.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <span class="inline-flex items-center justify-center bg-cyan-500/10 text-cyan-400 font-extrabold text-xs px-2.5 py-0.5 rounded-lg border border-cyan-500/20">
+                            Item #${q.id}
+                        </span>
+                        <span id="badge-status-${q.id}" class="text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-medium">
+                            Unanswered
+                        </span>
+                    </div>
+                    
+                    <h3 class="text-sm sm:text-base font-semibold text-white leading-relaxed mb-3">
+                        ${escapeHTML(q.question)}
+                    </h3>
+
+                    <div class="grid grid-cols-1 gap-2 sm:gap-3" id="options-grid-${q.id}">
+                        ${optionsHTML}
+                    </div>
+
+                    <div id="explanation-${q.id}" class="hidden mt-3 p-3 sm:p-4 rounded-xl text-xs sm:text-sm border">
+                        <!-- Correct Answer explanation appended post-submission -->
+                    </div>
+                `;
+
+                form.appendChild(qCard);
+            });
+
+            updateProgress();
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        function selectAnswer(questionId, letter) {
+            if (isSubmitted) return;
+
+            userAnswers[questionId] = letter;
+
+            const badge = document.getElementById(`badge-status-${questionId}`);
+            if (badge) {
+                badge.className = "text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-medium";
+                badge.innerText = `Ans: ${letter}`;
+            }
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const count = Object.keys(userAnswers).length;
+            document.getElementById('answered-count').innerText = count;
+            document.getElementById('mobile-answered-count').innerText = count;
+            const percentage = (count / 70) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        // Auto-scroll to first unanswered item or submit quiz
+        function submitQuiz() {
+            if (isSubmitted) {
+                showModal();
+                return;
+            }
+
+            const answeredCount = Object.keys(userAnswers).length;
+            if (answeredCount < 70) {
+                // Find first unanswered item
+                const missingItem = quizData.find(q => !userAnswers[q.id]);
+                if (missingItem) {
+                    const el = document.getElementById(`question-card-${missingItem.id}`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        el.classList.add('ring-2', 'ring-cyan-500');
+                        setTimeout(() => el.classList.remove('ring-2', 'ring-cyan-500'), 2000);
+                    }
+                }
+            }
+
+            const total = quizData.length;
+            let correctCount = 0;
+            let wrongCount = 0;
+
+            quizData.forEach((q) => {
+                const selected = userAnswers[q.id];
+                const isCorrect = selected === q.answer;
+                const card = document.getElementById(`question-card-${q.id}`);
+                const explanationBox = document.getElementById(`explanation-${q.id}`);
+
+                if (isCorrect) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+
+                // Lock inputs
+                const inputs = card.querySelectorAll('input[type="radio"]');
+                inputs.forEach(input => input.disabled = true);
+
+                // Highlight answer choices
+                ['A', 'B', 'C', 'D'].forEach(letter => {
+                    const label = document.getElementById(`opt-label-${q.id}-${letter}`);
+                    label.classList.add('disabled');
+
+                    if (letter === q.answer) {
+                        label.className = "flex items-center min-h-[52px] p-3 rounded-xl border-2 border-emerald-500 bg-emerald-950/50 text-emerald-100 text-xs sm:text-sm font-medium gap-3 select-none";
+                        const feedback = label.querySelector('.feedback-icon');
+                        feedback.className = "feedback-icon ml-auto text-emerald-400 font-bold block";
+                        feedback.innerHTML = '<i class="fa-solid fa-circle-check text-base"></i>';
+                    } else if (selected === letter && letter !== q.answer) {
+                        label.className = "flex items-center min-h-[52px] p-3 rounded-xl border-2 border-rose-500 bg-rose-950/50 text-rose-100 text-xs sm:text-sm font-medium gap-3 select-none";
+                        const feedback = label.querySelector('.feedback-icon');
+                        feedback.className = "feedback-icon ml-auto text-rose-400 font-bold block";
+                        feedback.innerHTML = '<i class="fa-solid fa-circle-xmark text-base"></i>';
+                    }
+                });
+
+                // Display explanation banner
+                explanationBox.classList.remove('hidden');
+                if (isCorrect) {
+                    explanationBox.className = "mt-3 p-3 rounded-xl text-xs sm:text-sm border border-emerald-500/30 bg-emerald-950/30 text-emerald-200 flex items-center gap-2.5";
+                    explanationBox.innerHTML = `
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-base flex-shrink-0"></i>
+                        <div><strong>Correct!</strong> Option <strong>${q.answer}</strong> is accurate.</div>
+                    `;
+                } else {
+                    const answerText = q.options[['A','B','C','D'].indexOf(q.answer)];
+                    explanationBox.className = "mt-3 p-3 rounded-xl text-xs sm:text-sm border border-rose-500/30 bg-rose-950/30 text-rose-200 flex items-start gap-2.5";
+                    explanationBox.innerHTML = `
+                        <i class="fa-solid fa-triangle-exclamation text-rose-400 text-base flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <span class="font-bold text-rose-300">Incorrect.</span> Your choice: <span class="underline decoration-rose-400 font-semibold">${selected ? selected : 'Blank'}</span>.
+                            <br>Correct choice: <strong class="text-emerald-400 font-bold">${q.answer} (${escapeHTML(answerText)})</strong>.
+                        </div>
+                    `;
+                }
+            });
+
+            isSubmitted = true;
+
+            // Populate Modal Results
+            const percentage = Math.round((correctCount / total) * 100);
+            document.getElementById('score-text').innerText = `${correctCount} / ${total}`;
+            document.getElementById('percentage-text').innerText = `${percentage}%`;
+            document.getElementById('correct-text').innerText = correctCount;
+            document.getElementById('wrong-text').innerText = wrongCount;
+
+            const gradeBadge = document.getElementById('grade-badge');
+            if (percentage >= 90) {
+                gradeBadge.className = "p-3 sm:p-4 rounded-xl mb-4 text-xs sm:text-sm font-semibold border bg-emerald-950/50 border-emerald-500/40 text-emerald-300 flex items-center justify-center gap-2";
+                gradeBadge.innerHTML = '<i class="fa-solid fa-award text-lg"></i> Outstanding Performance! Excellent Java knowledge!';
+            } else if (percentage >= 75) {
+                gradeBadge.className = "p-3 sm:p-4 rounded-xl mb-4 text-xs sm:text-sm font-semibold border bg-cyan-950/50 border-cyan-500/40 text-cyan-300 flex items-center justify-center gap-2";
+                gradeBadge.innerHTML = '<i class="fa-solid fa-thumbs-up text-lg"></i> Great Job! You passed the test!';
+            } else if (percentage >= 60) {
+                gradeBadge.className = "p-3 sm:p-4 rounded-xl mb-4 text-xs sm:text-sm font-semibold border bg-amber-950/50 border-amber-500/40 text-amber-300 flex items-center justify-center gap-2";
+                gradeBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-lg"></i> Passed! Review core concepts to increase your score.';
+            } else {
+                gradeBadge.className = "p-3 sm:p-4 rounded-xl mb-4 text-xs sm:text-sm font-semibold border bg-rose-950/50 border-rose-500/40 text-rose-300 flex items-center justify-center gap-2";
+                gradeBadge.innerHTML = '<i class="fa-solid fa-book-open text-lg"></i> Needs Practice. Review incorrect answers below to learn!';
+            }
+
+            showModal();
+        }
+
+        function showModal() {
+            const modal = document.getElementById('results-modal');
+            const card = document.getElementById('modal-card');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('results-modal');
+            const card = document.getElementById('modal-card');
+            modal.classList.add('opacity-0');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function reviewAnswers() {
+            closeModal();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function retakeQuiz() {
+            for (let member in userAnswers) delete userAnswers[member];
+            isSubmitted = false;
+            closeModal();
+            renderQuiz();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = function() {
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>
